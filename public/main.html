@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>com in</title>
+	</head>
+	<body>
+		<h1>Enter your name</h1>
+		<input type="text" id="unm">
+		<button type="button" onclick="onuser()">Join</button>
+		<script src="/socket.io/socket.io.js"></script>
+		<script>
+			let socket=io('/enter',{ autoConnect : false });
+			onuser=()=>{
+				if (document.getElementById('unm').value){
+					socket.auth=document.getElementById('unm').value;
+					socket.connect();
+				}
+			}
+		</script>
+	</body>
+</html>

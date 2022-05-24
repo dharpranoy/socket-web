@@ -1,0 +1,21 @@
+{
+  "name": "webchat",
+  "version": "1.0.0",
+  "description": "Realtime chatting application using socket.io with javascript",
+  "main": "null",
+  "scripts": {
+    "test": "null"
+  },
+  "repository": {
+    "type": "git",
+    "url": "null"
+  },
+  "keywords": [
+    "null"
+  ],
+  "author": "Pranoy Dhar",
+  "license": "UNLICENSED",
+  "dependencies": {
+    "socket.io": "^4.5.0"
+  }
+}

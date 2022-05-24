@@ -1,0 +1,98 @@
+<!doctype html>
+	<html lang="en">
+	<head>
+		<link rel="preconnect" href="https://fonts.googleapis.com">
+		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+		<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@500&display=swap" rel="stylesheet">
+		<title>Homepage</title>
+		<script src="/socket.io/socket.io.js"></script>
+		<script type="text/javascript">
+			let socket=io();
+			socket.on
+		</script>
+		<style type="text/css">
+			
+			body{
+				margin: auto;
+				
+			}
+			#banner{
+				
+				height: 15vh;
+				display: flex;
+				justify-content: baseline;
+				
+			}
+			#banner>div{
+				border-bottom: 0.2rem solid #A02534;
+				padding: 1rem;
+			}
+			#title{
+				background: #A02534;
+				font-size: 2rem;
+				font-family: 'Nunito';
+				min-width: 25vw;
+			}
+			#topics{
+				display: flex;
+				justify-content: baseline;
+				
+
+			}
+			#search{
+
+				min-width: 63.1vw;
+
+			}
+			
+			#search>input{
+				outline: none;
+				margin: 1rem;
+				padding: 0.5rem;
+				min-width: 30vw;
+				border: 0.2rem solid grey;
+				border-radius: 3rem;
+
+			}
+			#channels{
+				
+				background: #101010;
+				min-width: 20vw;
+				min-height: 84vh;
+			}
+			#channels>div{
+				font-family: 'Nunito';
+				padding: 1rem;
+				color: white;
+				transition: 0.3s;
+			}
+			#channels>div:hover{
+				background: grey;
+				transition: 0.3s;
+			}
+			#content{
+				padding: 2rem;
+				min-width: 72vw;
+
+				min-height: 82vh;
+			}
+		</style>
+
+	</head>
+	<body onload="fetchChannel()">
+		<div class="container">
+			<div id="banner"> 
+				<div id="icon"><img src="icon.png" height="70em" width="70em"></div>
+				<div id="title">InChat</div>
+				<div id="search"><input type="text" placeholder="Type to search..."></div>
+			</div>
+			<div id="topics">
+				<div id="channels"></div>
+				<div id="content">
+					
+				</div>
+			</div>
+
+		</div>	
+	</body>
+	</html>
