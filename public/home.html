@@ -5,12 +5,7 @@
 		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 		<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@500&display=swap" rel="stylesheet">
 		<title>Homepage</title>
-		<script src="/socket.io/socket.io.js"></script>
-		<script type="text/javascript">
-			let socket=io();
-			socket.on
-		</script>
-		<style type="text/css">
+			<style type="text/css">
 			
 			body{
 				margin: auto;
@@ -39,13 +34,13 @@
 				
 
 			}
-			#search{
+			#name{
 
 				min-width: 63.1vw;
 
 			}
 			
-			#search>input{
+			#name>input{
 				outline: none;
 				margin: 1rem;
 				padding: 0.5rem;
@@ -84,15 +79,55 @@
 			<div id="banner"> 
 				<div id="icon"><img src="icon.png" height="70em" width="70em"></div>
 				<div id="title">InChat</div>
-				<div id="search"><input type="text" placeholder="Type to search..."></div>
+				<div id="name">
+					<input type="text" id="uname" placeholder="Enter name">
+					<button id="select" onclick="socketconn()">Join</button>
+				</div>
 			</div>
 			<div id="topics">
 				<div id="channels"></div>
 				<div id="content">
-					
+					<input type="text" id="textm">
+					<button type="button" onclick="sendm()">Send</button>
 				</div>
 			</div>
 
-		</div>	
+		</div>
+		<script src="/socket.io/socket.io.js"></script>
+		<script type="text/javascript">
+			let socket=io('http://localhost:7600',{autoConnect:false});
+
+			socket.on("users",(con)=>{
+				let par = document.getElementById('channels');
+				par.innerHTML="";
+				for (co of con){
+					let par = document.getElementById('channels');
+					let chld = document.createElement('button');
+					chld.setAttribute("id",co.UserId)
+					chld.innerHTML=co.username;
+					par.appendChild(chld);
+				}
+			});
+			socket.on('server-to-client',(msg)=>{
+				let par=document.getElementById('content');
+				let chld=document.createElement('p');
+				chld.innerHTML=msg;
+				par.appendChild(chld);
+			});
+			socketconn=()=>{
+				let ele=document.getElementById('uname').value;
+				socket.auth={ ele };
+				socket.connect();
+			}
+			sendm=()=>{
+				let input=document.getElementById('textm');
+				if (input.value){
+					socket.emit('client-to-server',input.value);
+					input.value="";
+				}
+			}
+
+		</script>
+
 	</body>
 	</html>
