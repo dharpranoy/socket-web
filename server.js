@@ -5,6 +5,7 @@ const bodyparser=require('body-parser')
 const session=require('express-session')
 const cookie=require('cookie-parser')
 const fs=require('fs')
+const bcrypt=require('bcrypt')
 const upl=require('multer')()
 const server = require('http').createServer(app)
 const path=require('path')
@@ -37,19 +38,30 @@ app.post('/register',(req,res)=>{
 		let uname = req.body.txt
 		let email = req.body.email
 		let passwd = req.body.pswd
-		let valid = 'SELECT "'+uname+'" from reguser'
+		let valid = 'SELECT username from reguser where email='+'"'+email+'"'
+		console.log(valid)
 		con.query(valid,(err,result)=>{
 			if (err)
 				throw err
 			if (Object.keys(result).length===0){
 					let unid = email.split("@")[0]
 					console.log(unid)
-					let query = 'INSERT INTO reguser VALUES('+'"'+uname+'"'+','+'"'+email+'"'+','+'"'+passwd+'"'+','+'"'+unid+'"'+')'
+					bcrypt.hash(passwd,10).then(passhash=>{
+					let query = 'INSERT INTO reguser VALUES('+'"'+uname+'"'+','+'"'+email+'"'+','+'"'+passhash+'"'+','+'"'+unid+'"'+')'
+					console.log(passhash)
 					con.query(query,(err,result)=>{
-						if (err)
+						if (err){
 							console.log('failed to register')
-						else
-							console.log('Successfully registerd')
+						}else{
+							let USER = {
+									name:`${uname}`,
+									email:`${email}`,
+									passwd:`${passwd}`
+							}
+							res.cookie("userdata",USER)
+							res.redirect('/index')
+						}
+						})
 					})
 			}else{
 				res.type('text/html')
@@ -58,23 +70,41 @@ app.post('/register',(req,res)=>{
 		})
 		
 })
-app.post('/signin',(req,res)=>{
-	
+app.post('/signin',(req,res)=>{	
 		let email = req.body.email
 		let passwd = req.body.pswd
-		let valid = 'SELECT "'+email+'" from reguser'
+		let valid = 'SELECT username from reguser where email='+'"'+email+'"'
+		console.log(valid)
 		con.query(valid,(err,result)=>{
 			if (err)
 				console.log(err)
-			if (Object.keys(result)===1){
-				let map = 'SELECT passwd from reguser'
+			if (Object.keys(result).length!=0){
+				let map = 'SELECT username,password from reguser where email='+'"'+email+'"'
 				con.query(map,(error,db)=>{
-					if (db.password===passwd){
-						res.redirect('/index')
-					}
+					if (error)
+						throw error
+					bcrypt.compare(passwd,db[0].password,(errpss,respass)=>{
+							console.log(db[0].password,respass)
+							if (respass==true){
+									let USER = {
+											name:`${db.username}`,
+											email:`${email}`,
+											passwd:`${passwd}`
+									}
+									res.cookie("userdata",USER)
+									res.redirect('/index')
+							}else{
+								res.redirect('/')
+							}
+					})
 				})
 			}
 		})
+})
+app.get('/index',(req,res)=>{
+		if (req.cookies.userdata!=null){
+			res.sendFile(path.join(__dirname+'/public/main.html'))
+		} 
 })
 io.use((socket,next)=>{
 	const username=socket.handshake.auth.ele
