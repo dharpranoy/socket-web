@@ -1,5 +1,7 @@
 const express=require('express')
 const app=express()
+const server=require('http').createServer(app)
+const io=require('socket.io')(server)
 const sql=require('mysql')
 const bodyparser=require('body-parser')
 const session=require('express-session')
@@ -7,7 +9,6 @@ const cookie=require('cookie-parser')
 const fs=require('fs')
 const bcrypt=require('bcrypt')
 const upl=require('multer')()
-const server = require('http').createServer(app)
 const path=require('path')
 app.set('views','./views')
 app.set('view engine','pug')
@@ -23,14 +24,13 @@ app.use(session({
 let con = sql.createConnection({
 	host:'localhost',
 	user:'root',
-	password:'localmux@34',
+	password:'mysql#pypi',
 	database:'lambda'
 })
 con.connect(err=>{
 	if (err)
 		console.log(err)
 })
-const io=require('socket.io')(server)
 app.get('/',(req,res)=>{
 	res.sendFile(__dirname+'/public/login.html')
 })
@@ -136,31 +136,17 @@ app.get('/search',(req,res)=>{
 		})
 	}
 })
-io.use((socket,next)=>{
-	const username=socket.handshake.auth.ele
-	console.log(username)
-	socket.username=username
-	next()
-})
+
 io.on('connection',(socket)=>{
-	socket.conn.once('upgrade',()=>{console.log('socket connected')})
-	const users=[]
-	for (let [id,socket] of io.of("/").sockets){
-		users.push({
-			userId:id,
-			username:socket.username,
-		})
-	}
-	io.emit("users",users)
-
-	socket.broadcast.emit('server-to-client','An user joined the chat')
-	socket.on('client-to-server',(msg)=>{
-		io.emit('server-to-client',msg)
-	})
-	socket.on('disconnect',(socket)=>{
-		io.emit('server-to-client','An user left chat')
-		io.emit("status","offline")
-
+	console.log('connected with localhost:7600 with id=',socket.handshake.auth.user)
+	socket.join(socket.handshake.auth.user)
+	socket.on('client-to-server',(ob)=>{
+		console.log(ob)
+		let from={
+			content:ob.content,
+			f:socket.handshake.auth.user
+		}
+		socket.to(ob.to).emit('server-to-client',from)
 	})
 })
 
