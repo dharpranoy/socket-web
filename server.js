@@ -106,6 +106,22 @@ app.get('/index',(req,res)=>{
 			res.sendFile(path.join(__dirname+'/public/main.html'))
 		} 
 })
+app.get('/userinfo',(req,res)=>{
+		if (req.cookies.userdata!=null){
+				let query='SELECT * FROM reguser where email='+'"'+req.cookies.email+'"'
+				con.query(query,(err,result)=>{
+					if (err)
+						throw err
+					res.type('application/json')
+					res.send(JSON.stringify(result))
+				})
+		}else{
+			res.redirect('/')
+		}
+})
+app.post('',(req,res)=>{
+
+})
 io.use((socket,next)=>{
 	const username=socket.handshake.auth.ele
 	console.log(username)
