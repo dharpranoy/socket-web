@@ -23,7 +23,7 @@ app.use(session({
 let con = sql.createConnection({
 	host:'localhost',
 	user:'root',
-	password:'mysql#pypi',
+	password:'localmux@34',
 	database:'lambda'
 })
 con.connect(err=>{
@@ -84,18 +84,18 @@ app.post('/signin',(req,res)=>{
 					if (error)
 						throw error
 					bcrypt.compare(passwd,db[0].password,(errpss,respass)=>{
-							console.log(db[0].password,respass)
-							if (respass==true){
-									let USER = {
-											name:`${db.username}`,
-											email:`${email}`,
-											passwd:`${passwd}`
-									}
-									res.cookie("userdata",USER)
-									res.redirect('/index')
-							}else{
-								res.redirect('/')
-							}
+						console.log(db[0].password,respass)
+						if (respass==true){
+								let USER = {
+									name:`${db.username}`,
+									email:`${email}`,
+									passwd:`${passwd}`
+								}
+								res.cookie("userdata",USER)
+								res.redirect('/index')
+						}else{
+							res.redirect('/')
+						}
 					})
 				})
 			}
@@ -108,19 +108,33 @@ app.get('/index',(req,res)=>{
 })
 app.get('/userinfo',(req,res)=>{
 		if (req.cookies.userdata!=null){
-				let query='SELECT * FROM reguser where email='+'"'+req.cookies.email+'"'
-				con.query(query,(err,result)=>{
-					if (err)
-						throw err
-					res.type('application/json')
-					res.send(JSON.stringify(result))
-				})
+			let query='SELECT * FROM reguser where email='+'"'+req.cookies.userdata.email+'"'
+			console.log(query)
+			con.query(query,(err,result)=>{
+				if (err)
+					throw err
+				console.log(result)
+				res.type('application/json')
+				res.send(JSON.stringify(result))
+			})
 		}else{
 			res.redirect('/')
 		}
 })
-app.post('',(req,res)=>{
-
+app.get('/search',(req,res)=>{
+	if (req.cookies.userdata!=null){
+		console.log(req.query.umail)
+		let sem=req.query.umail
+		let query='SELECT * FROM reguser WHERE email='+'"'+sem+'"'
+		con.query(query,(err,result)=>{
+			if (err)
+				throw err
+			if (Object.keys(result).length==1){
+				res.type('application/json')
+				res.send(result)
+			}
+		})
+	}
 })
 io.use((socket,next)=>{
 	const username=socket.handshake.auth.ele

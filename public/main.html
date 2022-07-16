@@ -2,46 +2,48 @@
 <html>
 	<head>
 		<title>Ix chat</title>
+		<script src="/socket.io/socket.io.js"></script>
+		<script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
 		<link rel='stylesheet' href='./style.css'>
 	</head>
-	<body>
-					<div id="container">
-						<aside>
-							<header>
-								<input id='user-search' type="text" placeholder="search">
-							</header>
-							<ul id='contacts'>
-									
-							</ul>
-						</aside>
-						<main>
-							<header id='profile'>
-								<img id='dis-pic'>
-								<div>
-									<h2></h2>
-									<h3></h3>
-								</div>
-							</header>
-							<ul id="chat">
-								<li class="you">
-									<div class="entete">
-										<span class="status green"></span>
-										<h2></h2>
-										<h3></h3>
-									</div>
-									<div class="triangle"></div>
-									<div class="message">
-									</div>
-								</li>
-							</ul>
-							<footer>
-								<textarea placeholder="Type your message"></textarea>
-								<img src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/1940306/ico_picture.png" alt="">
-								<img src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/1940306/ico_file.png" alt="">
-								<a href="#">Send</a>
-							</footer>
-						</main>
+	<body onload="fetchUser()">
+		<div id="container">
+			<aside>
+				<header>
+					<input id='user-search' type="email" placeholder="search">
+				</header>
+				<ul id='contacts'>
+						
+				</ul>
+			</aside>
+			<main>
+				<header id='profile'>
+					<img id='dis-pic'>
+					<div>
+						<h2></h2>
+						<h3></h3>
 					</div>
-					<script src='./script.js'></script>
+				</header>
+				<ul id="chat">
+					<li class="you">
+						<div class="entete">
+							<span class="status green"></span>
+							<h2></h2>
+							<h3></h3>
+						</div>
+						<div class="triangle"></div>
+						<div class="message">
+						</div>
+					</li>
+				</ul>
+				<footer>
+					<textarea placeholder="Type your message"></textarea>
+					<img src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/1940306/ico_picture.png" alt="">
+					<img src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/1940306/ico_file.png" alt="">
+					<a href="#">Send</a>
+				</footer>
+			</main>
+		</div>
+		<script src='./script.js'></script>
 	</body>
 </html>
