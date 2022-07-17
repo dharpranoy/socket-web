@@ -1,10 +1,27 @@
 *{
 	box-sizing:border-box;
 }
-body{
-	background-color:#abd9e9;
-	font-family:Arial;
+@import url('https://fonts.googleapis.com/css2?family=Secular+One&display=swap');
+body {
+	font-family: 'Secular One', sans-serif;
+	background: linear-gradient(-45deg, #ee7752, #000000, #10a0FF, #23d5ab);
+	background-size: 400% 400%;
+	animation: gradient 15s ease infinite;
+	height: 90vh;
 }
+
+@keyframes gradient {
+	0% {
+		background-position: 0% 50%;
+	}
+	50% {
+		background-position: 100% 50%;
+	}
+	100% {
+		background-position: 0% 50%;
+	}
+}
+
 #container{
 	width:750px;
 	height:600px;
@@ -220,7 +237,7 @@ main footer a{
 	font-weight:bold;
 	color:#6fbced;
 	vertical-align:top;
-	margin-left:333px;
+	margin-left:300px;
 	margin-top:5px;
 	display:inline-block;
 }

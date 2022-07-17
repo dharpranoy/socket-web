@@ -20,6 +20,38 @@ fetchUser=()=>{
         console.log(USER.userId)
         socket.auth={user:USER.userId}
         socket.connect()
+        let friends=JSON.parse(localStorage.getItem('friends'))
+        if (friends==null){
+            let arr=[]
+            localStorage.setItem('friends',JSON.stringify(arr))
+        }
+        console.log(friends)
+        for (ob of friends){
+            USER.friendlist.set(ob.ID,true)
+            let list=document.getElementById('contacts')
+		    let par=document.createElement('li')
+		    par.setAttribute('name', ob.Name)
+		    par.setAttribute('uid',ob.ID)
+		    let chl=`
+			    <img>
+			    <div>
+				    <h2>${ob.Name}</h2>
+				    <h3><span></span></h3>
+			    </div>
+			    
+			    `
+		    par.innerHTML=chl
+		    let n=ob.Name
+		    let idn=ob.ID
+		    par.addEventListener('click',()=>{
+			    $('#curr').text(n)
+			    USER.selected=idn
+			    $('#chat').text('')
+		    })
+		    list.appendChild(par)
+		    console.log(ob)
+		    
+		}
     })
 }
 prs=()=>{
@@ -50,6 +82,7 @@ prs=()=>{
         console.log(ob)
         socket.emit('client-to-server',ob)
         txt.value=''
+        chatlog.scrollTop=chatlog.scrollHeight
     }
 
 }
@@ -65,8 +98,11 @@ $(document).ready(()=>{
 		.then(res=>res.json())
 		.then(cos=>{
 		    console.log(cos)
-		    if (USER.friendlist.has(cos[0].username)==false){
-			    USER.friendlist.set(cos[0].username,true)
+		    if (USER.friendlist.has(cos[0].uniqueid)==false){
+		        USER.friendlist.set(cos[0].uniqueid,true)
+		        let array=JSON.parse(localStorage.getItem('friends'))
+		        array.push({'Name':cos[0].username,'ID':cos[0].uniqueid})
+		        localStorage.setItem('friends',JSON.stringify(array))
 			    let list=document.getElementById('contacts')
 			    let par=document.createElement('li')
 			    par.setAttribute('name', cos[0].username)
@@ -77,7 +113,6 @@ $(document).ready(()=>{
 					    <h2>${cos[0].username}</h2>
 					    <h3><span></span></h3>
 				    </div>
-				    </li>
 			        `
 			    par.innerHTML=chl
 			    list.appendChild(par)
@@ -110,5 +145,6 @@ socket.on('server-to-client',(ob)=>{
         `
         item.innerHTML=cont
         chatlog.appendChild(item)
+        chatlog.scrollTop=chatlog.scrollHeight
     }
 })
