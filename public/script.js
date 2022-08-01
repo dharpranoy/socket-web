@@ -17,40 +17,43 @@ fetchUser=()=>{
     .then(res=>res.json())
     .then(cos=>{
         USER=new Handler(cos[0].uniqueid)
-        console.log(USER.userId)
+        console.log(USER)
         socket.auth={user:USER.userId}
         socket.connect()
         let friends=JSON.parse(localStorage.getItem('friends'))
-        if (friends==null){
-            let arr=[]
-            localStorage.setItem('friends',JSON.stringify(arr))
-        }
         console.log(friends)
-        for (ob of friends){
-            USER.friendlist.set(ob.ID,true)
-            let list=document.getElementById('contacts')
-		    let par=document.createElement('li')
-		    par.setAttribute('name', ob.Name)
-		    par.setAttribute('uid',ob.ID)
-		    let chl=`
-			    <img>
-			    <div>
-				    <h2>${ob.Name}</h2>
-				    <h3><span></span></h3>
-			    </div>
-			    
-			    `
-		    par.innerHTML=chl
-		    let n=ob.Name
-		    let idn=ob.ID
-		    par.addEventListener('click',()=>{
-			    $('#curr').text(n)
-			    USER.selected=idn
-			    $('#chat').text('')
-		    })
-		    list.appendChild(par)
-		    console.log(ob)
-		    
+        if (friends==null){
+            let arr={}
+            let db={}
+            localStorage.setItem('friends',JSON.stringify(arr))
+            localStorage.setItem('msgdb',JSON.stringify(db))
+        }else{
+            for (ob of friends[USER.userId]){
+                USER.friendlist.set(ob[1],true)
+                let list=document.getElementById('contacts')
+		        let par=document.createElement('li')
+		        par.setAttribute('name', ob[0])
+		        par.setAttribute('uid',ob[1])
+		        let chl=`
+			        <img>
+			        <div>
+				        <h2>${ob[0]}</h2>
+				        <h3><span></span></h3>
+			        </div>
+			        
+			        `
+		        par.innerHTML=chl
+		        let n=ob[0]
+		        let idn=ob[1]
+		        par.addEventListener('click',()=>{
+			        $('#curr').text(n)
+			        USER.selected=idn
+			        $('#chat').text('')
+		        })
+		        list.appendChild(par)
+		        console.log(ob)
+		        
+		    }
 		}
     })
 }
@@ -79,6 +82,10 @@ prs=()=>{
             content:txt.value,
             to:USER.selected
         }
+        let db = JSON.parse(localStorage.getItem('db'))
+        if (db.hasOwnProperty(USER.selected)==true){
+
+        }
         console.log(ob)
         socket.emit('client-to-server',ob)
         txt.value=''
@@ -101,7 +108,11 @@ $(document).ready(()=>{
 		    if (USER.friendlist.has(cos[0].uniqueid)==false){
 		        USER.friendlist.set(cos[0].uniqueid,true)
 		        let array=JSON.parse(localStorage.getItem('friends'))
-		        array.push({'Name':cos[0].username,'ID':cos[0].uniqueid})
+		        if (array.hasOwnProperty(USER.userId)==true){
+		            array[USER.userId].push([cos[0].username,cos[0].uniqueid])
+		        }else{
+		            array[USER.userId]=[[cos[0].username,cos[0].uniqueid]]
+		        }
 		        localStorage.setItem('friends',JSON.stringify(array))
 			    let list=document.getElementById('contacts')
 			    let par=document.createElement('li')
